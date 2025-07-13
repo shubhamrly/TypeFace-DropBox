@@ -33,12 +33,12 @@ function App() {
    //start with 1 for viewing files in the ui, i am using the full data set to sort, filter. 
   const getFilePage = async () => {
     try {
-      const res = await axios.get(`${API_BASE_URL}/api/files?all=true`); // Fetch all files
-      setFiles(res.data.files); // Store all files
-      setTotalFiles(res.data.total); // Set total file count
-      setBackendAvailable(true);
+      const res = await axios.get(`${API_BASE_URL}/api/files?all=true`);
+      setFiles(res.data.files);
+      setTotalFiles(res.data.total);
+      setIsbackendAvailable(true);
     } catch (error) {
-      setBackendAvailable(false);
+      setIsbackendAvailable(false); 
     }
   };
   const uploadFiles = async () => {
@@ -102,6 +102,7 @@ function App() {
                   <FileUploader
                     setFiles={setSelectedFiles}
                     uploadFiles={uploadFiles}
+                    getFilePage={getFilePage}
                   />
                 </Paper>
                 <Paper

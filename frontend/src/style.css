@@ -1,12 +1,12 @@
 .brand-title {
   color: #222;
   cursor: pointer;
-  font-weight: 600;
-  font-size: 1.3rem;
+  font-size: 0.9rem;
   transition: color 0.2s;
 }
-.brand-title:hover {
-  color: #e53935; /* red */
+.brand-title:hover,
+.brand-title:hover * {
+  color: #e53935 !important;
 }
 .brand-title img {
   vertical-align: middle;

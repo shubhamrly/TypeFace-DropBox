@@ -16,7 +16,7 @@ const allowedTypes = [
   'application/rtf'
 ];
 
-function FileUploader({ setFiles, uploadFiles }) {
+function FileUploader({ setFiles, uploadFiles, getFilePage }) {
   const [errorMessage, setErrorMesssage] = useState('');
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -25,6 +25,7 @@ function FileUploader({ setFiles, uploadFiles }) {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [dragActive, setDragActive] = useState(false);
   const dropFileRef = useRef(null);
+
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
     if (selectedFiles.length + files.length > MAX_FILES_LIMIT) {
@@ -87,21 +88,18 @@ function FileUploader({ setFiles, uploadFiles }) {
     const formData = new FormData();
     selectedFiles.forEach(file => formData.append('files', file));
     try {
-      await axios.post(`${API_BASE_URL}/api/files/upload`, formData, {
-        onUploadProgress: (progressEvent) => {
-          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-          setUploadProgress(percentCompleted);
-        },
-      });
+      await axios.post(`${API_BASE_URL}/api/files/upload`, formData);
       setIsUploading(false);
       setUploadCompleted(true);
       setTimeout(() => {
         setUploadCompleted(false);
         setUploadProgress(0);
-        if (dropFileRef.current) dropFileRef.current.value = ''; // Use ref instead of getElementById
+        if (dropFileRef.current) dropFileRef.current.value = '';
         setSelectedFiles([]);
         setFiles([]);
+        
       }, 2000);
+      getFilePage();
     } catch (err) {
       setIsUploading(false);
       setUploadFailed(true);
