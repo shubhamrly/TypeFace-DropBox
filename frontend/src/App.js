@@ -8,6 +8,7 @@ import {
   Paper,
   Alert,
 } from "@mui/material";
+import styles from "./style.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import FileUploader from "./components/FileUploader";
 import FileViewer from "./components/FileViewer";
@@ -67,13 +68,15 @@ function App() {
         }}
       >
         <Toolbar style={{ display: "flex", justifyContent: "space-between" }}>
-          <span className="brand-title" onClick={scrollToTop}>
+          <span className="brand-title" onClick={scrollToTop}
+          style={{ color: "#222", cursor: "pointer" }}>
             <img
               src={downloadIcon}
               alt="Dropbox Icon"
               style={{
                 width: 32,
                 height: 32,
+                color: "black",
                 marginRight: 12,
                 verticalAlign: "middle",
               }}

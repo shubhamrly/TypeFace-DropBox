@@ -1,0 +1,15 @@
+.brand-title {
+  color: #222;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1.3rem;
+  transition: color 0.2s;
+}
+.brand-title:hover {
+  color: #e53935; /* red */
+}
+.brand-title img {
+  vertical-align: middle;
+  margin-right: 12px;
+  color: black; /* keeps icon color unchanged */
+}
