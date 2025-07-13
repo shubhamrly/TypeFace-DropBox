@@ -41,7 +41,6 @@ import axios from "axios";
 import previewFallback from "./assets/previewfallback.jpg";
 import emptyTableImage from "./assets/emptyTable.png";
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
-
 // FileViewer component displays files in search, sort, filter, and view mod
 function FileViewer({ page = 1, filesPerPage = 15, onPageChange }) {
   const navigate = useNavigate();
