@@ -138,3 +138,6 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 backend/package-lock.json
+/backend/node_modules
+/frontend/node_modules
+/backend/uploads
