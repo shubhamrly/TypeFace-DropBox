@@ -58,7 +58,7 @@ function FileViewer({ page = 1, filesPerPage = 15, onPageChange }) {
   const navigate = useNavigate();
   const [files, setFiles] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [sortOption, setSortOption] = useState("date");
+  const [sortOption, setSortOption] = useState("date-1");
   const [filterType, setFilterType] = useState("");
   const [infoDialogOpen, setInfoDialogOpen] = useState(false);
   const [infoFile, setInfoFile] = useState(null);
@@ -83,7 +83,7 @@ function FileViewer({ page = 1, filesPerPage = 15, onPageChange }) {
   //for filtering changes
   const getFiles = async (
     searchTerm = "",
-    sortOption = "date",
+    sortOption = "date-1",
     filterType = ""
   ) => {
     try {
@@ -98,9 +98,13 @@ function FileViewer({ page = 1, filesPerPage = 15, onPageChange }) {
         allFiles = allFiles.filter((file) => file.fileType === filterType);
       }
       allFiles = allFiles.sort((a, b) => {
-        if (sortOption === "date") {
+        if (sortOption === "date-2") {
           return new Date(b.uploadedDate) - new Date(a.uploadedDate);
-        } else if (sortOption === "size") {
+        }else if (sortOption === "date-1") {
+          return new Date(a.uploadedDate) - new Date(b.uploadedDate);
+        } else if (sortOption === "size-2") {
+          return a.size - b.size; }
+        else if (sortOption === "size-1") {
           return b.size - a.size;
         }
         return 0;
@@ -511,9 +515,11 @@ function FileViewer({ page = 1, filesPerPage = 15, onPageChange }) {
               height: "32px",
               fontSize: "14px",
             }}
-          >
-            <MenuItem value="date">Sort by Date</MenuItem>
-            <MenuItem value="size">Sort by Size</MenuItem>
+          > <MenuItem value="date-1">ASC Date</MenuItem>
+            <MenuItem value="date-2">DESC Date</MenuItem>
+            <MenuItem value="size-2">ASC Size</MenuItem>
+            <MenuItem value="size-1">DESC Size</MenuItem>
+            
           </Select>
         </Box>
         {}

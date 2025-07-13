@@ -2,15 +2,20 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv').config();
+const rateLimit = require('express-rate-limit');
+
 const fileRoutes = require('./routes/fileRoutes');
 
 
 const app = express();
-// NOT: useing rate limiter for now, but can be added later
-// Middleware
 app.use(cors());
 app.use(express.json());
-
+// rate limiting to prevent Uplods flood
+const ratelimiter = rateLimit({
+    windowMs: 1 * 60 * 1000,  //current limit to 1 minutes per 200 requests.
+    max: 200,
+    message: { error: "Rate limiting in action. Try after 1 min." }
+});
 // MongoDB Connection (future for Exponetial Backoff)
 mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
@@ -24,19 +29,13 @@ mongoose.connect(process.env.MONGODB_URI, {
     // Graceful shutdown after short delay (in case of transient issue)
     setTimeout(() => process.exit(1), 3000);
 });
-
+app.use(ratelimiter);
 
 // base endpoint
 app.get('/', (req, res) => {
     res.send('📦 File service API is up and running');
 });
 
-
-// Global error handler
-app.use((err, req, res, next) => {
-    console.error('💥 Unexpected error:', err.stack);
-    res.status(500).json({ error: 'Server error on the server, check stack trace' });
-});
 // Routes
 app.use('/api/files', fileRoutes);
 // Starting the server
