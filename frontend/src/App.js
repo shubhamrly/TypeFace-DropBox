@@ -9,11 +9,12 @@ import {
   Alert,
 } from "@mui/material";
 import styles from "./style.css";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import FileUploader from "./components/FileUploader";
 import FileViewer from "./components/FileViewer";
 import downloadIcon from "./components/assets/download.png";
 import Logout from "./components/Logout";
+import Welcome from "./components/Welcome";
 import Footer from "./components/Footer";
 import UserProfileMenu from "./components/UserProfileMenu";
 //Importing fro, .env file
@@ -30,6 +31,7 @@ function App() {
   //for table view 
   const FILES_PER_PAGE = 15;
   const isLogoutPage = window.location.pathname === "/logout";
+  const isWelcomePage = window.location.pathname === "/" || window.location.pathname === "/welcome";
   const fileViewerRef = useRef();
 
   // useCallback to memoize getFilePage
@@ -92,13 +94,15 @@ function App() {
             TypeFace-Dropbox
           </span>
           <span style={{ left: "-39px", position: "relative" }}>
-          <UserProfileMenu isLogoutPage={isLogoutPage} />
+          <UserProfileMenu isLogoutPage={isLogoutPage} isWelcomePage={isWelcomePage} />
           </span>
         </Toolbar>
       </AppBar>
       <Routes>
+        <Route path="/" element={<Welcome />} />
+        <Route path="/welcome" element={<Welcome />} />
         <Route
-          path="/"
+          path="/home"
           element={
             <>
               <Container style={{ marginTop: "88px", textAlign: "center" }}>
