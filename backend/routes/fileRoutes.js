@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 
-const fileController = require('../controllers/fileController');
-const multer = require('../services/multerService');
+const fileController = require('../controller/fileController');
+const multer = require('../service/multerService');
 
 //uploading  endpoint for single as well as up 20 files at once
 router.post('/upload', multer.array('files', 20), fileController.uploadFiles);

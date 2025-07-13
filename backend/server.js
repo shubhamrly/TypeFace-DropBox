@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv').config();
-
+const fileRoutes = require('./routes/fileRoutes');
 
 
 const app = express();
@@ -37,7 +37,8 @@ app.use((err, req, res, next) => {
     console.error('💥 Unexpected error:', err.stack);
     res.status(500).json({ error: 'Server error on the server, check stack trace' });
 });
-
+// Routes
+app.use('/api/files', fileRoutes);
 // Starting the server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

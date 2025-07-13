@@ -12,7 +12,7 @@ const fileSchema = new mongoose.Schema(
     fileType: String,
   },
   {
-    collection: "file-metadata",
+    collection: "file-metadatas",
   }
 );
 module.exports = mongoose.model("File", fileSchema);
