@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -13,6 +13,7 @@ import {
   DialogTitle,
   DialogContent,
   DialogContentText,
+  DialogActions,
   TextField,
   Snackbar,
   Alert,
@@ -25,6 +26,7 @@ import {
   TableRow,
   ToggleButtonGroup,
   ToggleButton,
+  Button,
 } from "@mui/material";
 import {
   FaSearch,
@@ -35,14 +37,24 @@ import {
   FaInfoCircle,
   FaThList,
   FaTh,
+  FaEdit,
+  FaTrashAlt,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import previewFallback from "./assets/previewfallback.jpg";
 import emptyTableImage from "./assets/emptyTable.png";
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
-// FileViewer component displays files in search, sort, filter, and view mod
-function FileViewer({ page = 1, filesPerPage = 15, onPageChange, refreshFiles }) {
+
+export const iconColors = {
+  view: "rgb(21, 158, 60)",
+  download: "rgb(62, 0, 148)",
+  info: "rgb(0, 123, 255)",
+  rename: "rgb(255, 193, 7)",
+  delete: "rgb(244, 67, 54)",
+};
+
+function FileViewer({ page = 1, filesPerPage = 15, onPageChange }) {
   const navigate = useNavigate();
   const [files, setFiles] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -54,20 +66,22 @@ function FileViewer({ page = 1, filesPerPage = 15, onPageChange, refreshFiles })
   const [viewMode, setViewMode] = useState("thumbnail");
   const [totalFiles, setTotalFiles] = useState(0);
   const [backendAvailable, setBackendAvailable] = useState(true);
-  //get files after,upload form the app js function declaration
+  const [renameDialogOpen, setRenameDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [fileToRename, setFileToRename] = useState(null);
+  const [fileToDelete, setFileToDelete] = useState(null);
+  const [newFileName, setNewFileName] = useState("");
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertType, setAlertType] = useState("success");
+  const [alertOpen, setAlertOpen] = useState(false);
+
+  //get files form the app js function declaration
   useEffect(() => {
-    getFilePageTable();
+    getFiles();
   }, []);
 
-  //get files after,upload form the app js function declaration
-  useEffect(() => {
-    if (typeof refreshFiles === "function") {
-      refreshFiles(getFilePageTable);
-    }
-  }, [refreshFiles]);
-
   //for filtering changes
-  const getFilePageTable = async (
+  const getFiles = async (
     searchTerm = "",
     sortOption = "date",
     filterType = ""
@@ -102,19 +116,19 @@ function FileViewer({ page = 1, filesPerPage = 15, onPageChange, refreshFiles })
   const handleSearch = (i) => {
     const term = i.target.value;
     setSearchTerm(term);
-    getFilePageTable(term, sortOption, filterType);
+    getFiles(term, sortOption, filterType);
   };
  // sorting based on the uploaded Date, or Size  (B) 
   const handleSortChange = (i) => {
     const option = i.target.value;
     setSortOption(option);
-    getFilePageTable(searchTerm, option, filterType);
+    getFiles(searchTerm, option, filterType);
   };
   // filtring is done on allowed Types so it will be fetched from array
   const handleFilterChange = (i) => {
     const type = i.target.value;
     setFilterType(type);
-    getFilePageTable(searchTerm, sortOption, type);
+    getFiles(searchTerm, sortOption, type);
   };
 
   // drive has thumbnail and list view, will try 
@@ -176,9 +190,274 @@ function FileViewer({ page = 1, filesPerPage = 15, onPageChange, refreshFiles })
     setInfoDialogOpen(false);
     setInfoFile(null);
   };
+  const handleRenameClick = (file, event) => {
+    if (event) event.stopPropagation();
+    setFileToRename(file);
+    setNewFileName(file.originalName);
+    setRenameDialogOpen(true);
+  };
 
-  // Memoize files to only update UI when files actually change
-  const memoizedFiles = useMemo(() => files, [files]);
+  const handleDeleteClick = (file, event) => {
+    if (event) event.stopPropagation();
+    setFileToDelete(file);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleRenameFile = async () => {
+    try {
+      const response = await axios.put(
+        `${API_BASE_URL}/api/files/rename/${fileToRename.filename}`,
+        { newName: newFileName }
+      );
+      
+      // Update file list with renamed file
+      const updatedFiles = files.map((file) => 
+        file._id === response.data._id ? { ...file, originalName: newFileName } : file
+      );
+      setFiles(updatedFiles);
+      
+      setRenameDialogOpen(false);
+      setAlertType("success");
+      setAlertMessage("File renamed successfully");
+      setAlertOpen(true);
+    } catch (error) {
+      setAlertType("error");
+      setAlertMessage("Failed to rename file. Please try again.");
+      setAlertOpen(true);
+    }
+  };
+
+  const handleDeleteFile = async () => {
+    try {
+      await axios.delete(`${API_BASE_URL}/api/files/${fileToDelete.filename}`);
+      
+      // Remove deleted file from list
+      const updatedFiles = files.filter((file) => file._id !== fileToDelete._id);
+      setFiles(updatedFiles);
+      setTotalFiles(totalFiles - 1);
+      
+      setDeleteDialogOpen(false);
+      setAlertType("success");
+      setAlertMessage("File deleted successfully");
+      setAlertOpen(true);
+    } catch (error) {
+      setAlertType("error");
+      setAlertMessage("Failed to delete file. Please try again.");
+      setAlertOpen(true);
+    }
+  };
+  
+  // Add the actions for the thumbnail view
+  const renderFileActions = (file) => (
+    <Box
+      style={{
+        position: "absolute",
+        left: 0,
+        right: 0,
+        bottom: 0,
+        display: "flex",
+        justifyContent: "center",
+        gap: "8px",
+      }}
+    >
+      <Tooltip title="View">
+        <IconButton
+          size="small"
+          onClick={(i) => {
+            i.stopPropagation();
+            handleView(file);
+          }}
+          style={{ color: iconColors.view }}
+        >
+          <FaEye />
+        </IconButton>
+      </Tooltip>
+      <Tooltip title="Download">
+        <IconButton
+          size="small"
+          onClick={(i) => {
+            i.stopPropagation();
+            handleDownload(file);
+          }}
+          style={{ color: iconColors.download }}
+        >
+          <FaDownload />
+        </IconButton>
+      </Tooltip>
+      <Tooltip title="Info">
+        <IconButton
+          size="small"
+          onClick={(i) => {
+            i.stopPropagation();
+            handleInfoOpen(file);
+          }}
+          style={{ color: iconColors.info }}
+        >
+          <FaInfoCircle />
+        </IconButton>
+      </Tooltip>
+      <Tooltip title="Rename">
+        <IconButton
+          size="small"
+          onClick={(i) => handleRenameClick(file, i)}
+          style={{ color: iconColors.rename }}
+        >
+          <FaEdit />
+        </IconButton>
+      </Tooltip>
+      <Tooltip title="Delete">
+        <IconButton
+          size="small"
+          onClick={(i) => handleDeleteClick(file, i)}
+          style={{ color: iconColors.delete }}
+        >
+          <FaTrashAlt />
+        </IconButton>
+      </Tooltip>
+    </Box>
+  );
+
+  // Update the thumbnail card content to use the new actions function
+  const renderThumbnailView = () => (
+    <Box
+      style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(4, 1fr)",
+        gap: "16px",
+      }}
+    >
+      {files.map((file) => (
+        <Paper
+          elevation={3}
+          key={file._id}
+          style={{ cursor: "pointer", position: "relative" }}
+        >
+          <Card style={{ position: "relative" }}>
+            <div
+              onClick={() => handleView(file)}
+              style={{ cursor: "pointer" }}
+              title="View"
+            >
+              {renderPreview(file)}
+            </div>
+            <CardContent
+              style={{
+                textAlign: "center",
+                position: "relative",
+                paddingBottom: "40px",
+              }}
+            >
+              <Typography>
+                {file.originalName.length > 10
+                  ? `${file.originalName.substring(0, 10)}...`
+                  : file.originalName}
+              </Typography>
+              {renderFileActions(file)}
+            </CardContent>
+          </Card>
+        </Paper>
+      ))}
+    </Box>
+  );
+
+  // Update the list view to include rename and delete actions
+  const renderListView = () => (
+    <TableContainer component={Paper} style={{ marginBottom: "16px" }}>
+      <Table size="small">
+        <TableHead>
+          <TableRow style={{ backgroundColor: "#f5f5f5" }}>
+            <TableCell style={{ width: "50px" }}></TableCell>
+            <TableCell>Name</TableCell>
+            
+            <TableCell>Size</TableCell>
+            <TableCell>Uploaded</TableCell>
+            <TableCell align="center">Actions</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {files.map((file) => (
+            <TableRow key={file._id} hover>
+              <TableCell>
+                <div
+                  style={{
+                    width: "40px",
+                    height: "40px",
+                    overflow: "hidden",
+                  }}
+                >
+                  <img
+                    src={`${API_BASE_URL}/api/files/preview/${file.filename}`}
+                    alt={file.originalName}
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                    }}
+                    onError={(i) => {
+                      i.target.onerror = null;
+                      i.target.src = previewFallback;
+                    }}
+                  />
+                </div>
+              </TableCell>
+              <TableCell
+                onClick={() => handleView(file)}
+                style={{ cursor: "pointer" }}
+              >
+                {file.originalName}
+              </TableCell>
+             
+              <TableCell>{(file.size / 1024).toFixed(2)} KB</TableCell>
+              <TableCell>
+                {new Date(file.uploadedDate).toLocaleString()}
+              </TableCell>
+              <TableCell align="center">
+               <span style={{ display: "flex", justifyContent: "center", gap: "8px",alignItems: "center" }}>
+                <Tooltip title="View">
+                  <IconButton size="small" onClick={() => handleView(file)}>
+                    <FaEye style={{ color: iconColors.view }} />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Download">
+                  <IconButton
+                    size="small"
+                    onClick={() => handleDownload(file)}
+                  >
+                    <FaDownload style={{ color: iconColors.download }} />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Info">
+                  <IconButton
+                    size="small"
+                    onClick={() => handleInfoOpen(file)}
+                  >
+                    <FaInfoCircle style={{ color: iconColors.info }} />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Rename">
+                  <IconButton
+                    size="small"
+                    onClick={(e) => handleRenameClick(file, e)}
+                  >
+                    <FaEdit style={{ color: iconColors.rename }} />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Delete">
+                  <IconButton
+                    size="small"
+                    onClick={(e) => handleDeleteClick(file, e)}
+                  >
+                    <FaTrashAlt style={{ color: iconColors.delete }} />
+                  </IconButton>
+                </Tooltip>
+                </span>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  );
 
   return (
     <Box style={{ padding: "16px" }}>
@@ -275,7 +554,7 @@ function FileViewer({ page = 1, filesPerPage = 15, onPageChange, refreshFiles })
         </Box>
       </Box>
       {}
-      {memoizedFiles.length === 0 ? (
+      {files.length === 0 ? (
         <Box
           sx={{
             textAlign: "center",
@@ -295,170 +574,9 @@ function FileViewer({ page = 1, filesPerPage = 15, onPageChange, refreshFiles })
           />
         </Box>
       ) : viewMode === "thumbnail" ? (
-        <Box
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(4, 1fr)",
-            gap: "16px",
-          }}
-        >
-          {memoizedFiles.map((file) => (
-            <Paper
-              elevation={3}
-              key={file._id}
-              style={{ cursor: "pointer", position: "relative" }}
-            >
-              <Card style={{ position: "relative" }}>
-                <div
-                  onClick={() => handleView(file)}
-                  style={{ cursor: "pointer" }}
-                  title="View"
-                >
-                  {renderPreview(file)}
-                </div>
-                <CardContent
-                  style={{
-                    textAlign: "center",
-                    position: "relative",
-                    paddingBottom: "40px",
-                  }}
-                >
-                  <Typography>
-                    {file.originalName.length > 10
-                      ? `${file.originalName.substring(0, 10)}...`
-                      : file.originalName}
-                  </Typography>
-                  {}
-                  <Box
-                    style={{
-                      position: "absolute",
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
-                      display: "flex",
-                      justifyContent: "center",
-                      gap: "8px",
-                    }}
-                  >
-                    <Tooltip title="View">
-                      <IconButton
-                        size="small"
-                        onClick={(i) => {
-                          i.stopPropagation();
-                          handleView(file);
-                        }}
-                      >
-                        <FaEye />
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip title="Download">
-                      <IconButton
-                        size="small"
-                        onClick={(i) => {
-                          i.stopPropagation();
-                          handleDownload(file);
-                        }}
-                      >
-                        <FaDownload />
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip title="Info">
-                      <IconButton
-                        size="small"
-                        onClick={(i) => {
-                          i.stopPropagation();
-                          handleInfoOpen(file);
-                        }}
-                      >
-                        <FaInfoCircle />
-                      </IconButton>
-                    </Tooltip>
-                  </Box>
-                </CardContent>
-              </Card>
-            </Paper>
-          ))}
-        </Box>
+        renderThumbnailView()
       ) : (
-        <TableContainer component={Paper} style={{ marginBottom: "16px" }}>
-          <Table size="small">
-            <TableHead>
-              <TableRow style={{ backgroundColor: "#f5f5f5" }}>
-                <TableCell style={{ width: "50px" }}></TableCell>
-                <TableCell style={{maxWidth: "300px"}}>Name</TableCell>
-               
-                <TableCell>Size</TableCell>
-                <TableCell>Uploaded</TableCell>
-                <TableCell align="center">Actions</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {memoizedFiles.map((file) => (
-                <TableRow key={file._id} hover>
-                  <TableCell>
-                    <div
-                      style={{
-                        width: "40px",
-                        height: "40px",
-                        overflow: "hidden",
-                      }}
-                    >
-                      <img
-                        src={`${API_BASE_URL}/api/files/preview/${file.filename}`}
-                        alt={file.originalName}
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                          objectFit: "cover",
-                        }}
-                        onError={(i) => {
-                          i.target.onerror = null;
-                          i.target.src = previewFallback;
-                        }}
-                      />
-                    </div>
-                  </TableCell>
-                  <TableCell
-                    onClick={() => handleView(file)}
-                    style={{ cursor: "pointer" }}
-                  >
-                    {file.originalName}
-                  </TableCell>
-                 
-                  <TableCell>{(file.size / 1024).toFixed(2)} KB</TableCell>
-                  <TableCell>
-                    {new Date(file.uploadedDate).toLocaleString()}
-                  </TableCell>
-                  <TableCell align="center">
-                <div style={{ display: "flex", justifyContent: "center", gap: "8px" }}>
-                    <Tooltip title="View">
-                      <IconButton size="small" onClick={() => handleView(file)}>
-                        <FaEye />
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip title="Download">
-                      <IconButton
-                        size="small"
-                        onClick={() => handleDownload(file)}
-                      >
-                        <FaDownload />
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip title="Info">
-                      <IconButton
-                        size="small"
-                        onClick={() => handleInfoOpen(file)}
-                      >
-                        <FaInfoCircle />
-                      </IconButton>
-                    </Tooltip>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        renderListView()
       )}
       {}
       {totalFiles > filesPerPage && (
@@ -502,6 +620,59 @@ function FileViewer({ page = 1, filesPerPage = 15, onPageChange, refreshFiles })
         </DialogContent>
       </Dialog>
       {}
+      {/* Rename Dialog */}
+      <Dialog open={renameDialogOpen} onClose={() => setRenameDialogOpen(false)}>
+        <DialogTitle>Rename File</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Enter a new name for the file:
+          </DialogContentText>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="New File Name"
+            fullWidth
+            value={newFileName}
+            onChange={(e) => setNewFileName(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setRenameDialogOpen(false)}>Cancel</Button>
+          <Button onClick={handleRenameFile} variant="contained" color="primary">
+            Rename
+          </Button>
+        </DialogActions>
+      </Dialog>
+      
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
+        <DialogTitle>Delete File</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to delete "{fileToDelete?.originalName}"? This action cannot be undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
+          <Button onClick={handleDeleteFile} variant="contained" color="error">
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+      
+      {/* Alert Snackbar */}
+      <Snackbar
+        open={alertOpen}
+        autoHideDuration={3000}
+        onClose={() => setAlertOpen(false)}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert severity={alertType} onClose={() => setAlertOpen(false)}>
+          {alertMessage}
+        </Alert>
+      </Snackbar>
+      
+      {/* Existing backend warning snackbar */}
       <Snackbar
         open={backendWarning}
         autoHideDuration={2000}
@@ -515,4 +686,5 @@ function FileViewer({ page = 1, filesPerPage = 15, onPageChange, refreshFiles })
     </Box>
   );
 }
+
 export default FileViewer;

@@ -58,8 +58,45 @@ const previewFile = async (req, res) => {
         }
     }
 };
+const renameFile = async (req, res) => {
+    try {
+        const { filename } = req.params;
+        const { newName } = req.body;
+        
+        if (!newName || typeof newName !== 'string' || newName.trim() === '') {
+            return res.status(400).send({ error: 'New name is required' });
+        }
+        
+        const updatedFile = await fileService.renameFile(filename, newName.trim());
+        
+        if (!updatedFile) {
+            return res.status(404).send({ error: 'File not found' });
+        }
+        
+        res.send(updatedFile);
+    } catch (error) {
+        res.status(500).send({ error: error.message });
+    }
+};
+const deleteFile = async (req, res) => {
+    try {
+        const { filename } = req.params;
+        const deleted = await fileService.deleteFile(filename);
+        
+        if (!deleted) {
+            return res.status(404).send({ error: 'File not found' });
+        }
+        
+        res.send({ success: true, message: 'File deleted successfully' });
+    } catch (error) {
+        res.status(500).send({ error: error.message });
+    }
+};
+
 module.exports = {
     getFiles,
     uploadFiles,
     previewFile,
+    renameFile,
+    deleteFile,
 }

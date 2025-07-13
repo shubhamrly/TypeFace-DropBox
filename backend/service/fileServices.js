@@ -47,14 +47,37 @@ const getFilePath = async (filename) => {
 
 
 
-
-
 //for preview info icon, must have in thumbail but not in list view
 const getFilePathAndMeta = async (filename) => {
     const file = await File.findOne({ filename });
     if (!file) return { filePath: null, file: null };
     const filePath = path.join(__dirname, '../uploads', file.filename);
     return fs.existsSync(filePath) ? { filePath, file } : { filePath: null, file: null };
+};
+//for renaiming a file in the mingodb
+const renameFile = async (filename, newName) => {
+    const file = await File.findOne({ filename });
+    if (!file) return null;
+    
+    file.originalName = newName;
+    await file.save();
+    return file;
+};// removing entry in the fb and then local storage
+            const deleteFile = async (filename) => {
+    const file = await File.findOne({ filename });
+    if (!file) return false;
+    
+    const filePath = path.join(__dirname, '../uploads', file.filename);
+    
+    // Delete from mongodb
+    await File.deleteOne({ filename });
+    
+    // remove from uploads
+    if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+    }
+    
+    return true;
 };
 
 
@@ -63,5 +86,7 @@ module.exports = {
     getAllFiles,
     getFilePath,
     getFilePathAndMeta,
-    getFilesPaginated
+    getFilesPaginated,
+    renameFile,      // <-- add this
+    deleteFile       // <-- and this
 };
