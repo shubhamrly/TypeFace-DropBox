@@ -5,7 +5,7 @@ import uploadCompletedIcon from './assets/uploadComplete.gif';
 import uploadFailedIcon from './assets/uploadFailed.gif';
 import axios from 'axios';
 const MAX_FILES_LIMIT = 15;
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+const API_BASE_URL = process.env.TYPEFACE_APP_API_BASE_URL;
 // allowing only specific files, 
 const allowedTypes = [
   'image/jpeg', 
