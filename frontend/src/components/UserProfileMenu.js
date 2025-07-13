@@ -42,8 +42,7 @@ function UserProfileMenu({ isLogoutPage }) {
           >
             <MenuItem onClick={handleMenuClose}><MdEmail style={{ fontSize: 20, color: "#1976d2" }}  />:shubhamgh00@gmail.com</MenuItem>
             <MenuItem onClick={() => (window.location.href = "/logout")}>
-            <MdLogout style={{ fontSize: 20, color: "#fe243d" }} />:
-              Sign Out
+            <MdLogout style={{ fontSize: 20, color: "#fe243d" }} />:Sign Out
             </MenuItem>
           </Menu>
         </>

@@ -1,7 +1,8 @@
 import React from "react";
 import { Container, Typography } from "@mui/material";
-import byeGif from "./assets/bye.gif"; // Import the GIF
+import byeGif from "./assets/bye.gif";
 import Footer from "./Footer";
+import { useDispatch } from "react-redux";
 
 function Logout() {
   const dispatch = useDispatch();
