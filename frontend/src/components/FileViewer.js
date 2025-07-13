@@ -41,9 +41,17 @@ import {
   FaTrashAlt,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import previewFallback from "./assets/previewfallback.jpg";
 import emptyTableImage from "./assets/emptyTable.png";
+import {
+  setSortOption,
+  setFilterType,
+  setSearchTerm,
+  setViewMode,
+} from "./fileViewerSlice";
+
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 export const iconColors = {
@@ -56,14 +64,14 @@ export const iconColors = {
 
 function FileViewer({ page = 1, filesPerPage = 15, onPageChange }) {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { sortOption, filterType, searchTerm, viewMode } = useSelector(
+    (state) => state.fileViewer
+  );
   const [files, setFiles] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [sortOption, setSortOption] = useState("date-1");
-  const [filterType, setFilterType] = useState("");
   const [infoDialogOpen, setInfoDialogOpen] = useState(false);
   const [infoFile, setInfoFile] = useState(null);
   const [backendWarning, setBackendWarning] = useState(false);
-  const [viewMode, setViewMode] = useState("thumbnail");
   const [totalFiles, setTotalFiles] = useState(0);
   const [backendAvailable, setBackendAvailable] = useState(true);
   const [renameDialogOpen, setRenameDialogOpen] = useState(false);
@@ -78,14 +86,10 @@ function FileViewer({ page = 1, filesPerPage = 15, onPageChange }) {
   //get files form the app js function declaration
   useEffect(() => {
     getFiles();
-  }, []);
+  }, [searchTerm, sortOption, filterType]);
 
   //for filtering changes
-  const getFiles = async (
-    searchTerm = "",
-    sortOption = "date-1",
-    filterType = ""
-  ) => {
+  const getFiles = async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/api/files?all=true`);
       let allFiles = res.data.files;
@@ -100,11 +104,11 @@ function FileViewer({ page = 1, filesPerPage = 15, onPageChange }) {
       allFiles = allFiles.sort((a, b) => {
         if (sortOption === "date-2") {
           return new Date(b.uploadedDate) - new Date(a.uploadedDate);
-        }else if (sortOption === "date-1") {
+        } else if (sortOption === "date-1") {
           return new Date(a.uploadedDate) - new Date(b.uploadedDate);
         } else if (sortOption === "size-2") {
-          return a.size - b.size; }
-        else if (sortOption === "size-1") {
+          return a.size - b.size;
+        } else if (sortOption === "size-1") {
           return b.size - a.size;
         }
         return 0;
@@ -116,29 +120,26 @@ function FileViewer({ page = 1, filesPerPage = 15, onPageChange }) {
       setBackendAvailable(false);
     }
   };
-   // matching from the original name of the file uploaded
+  // matching from the original name of the file uploaded
   const handleSearch = (i) => {
     const term = i.target.value;
-    setSearchTerm(term);
-    getFiles(term, sortOption, filterType);
+    dispatch(setSearchTerm(term));
   };
- // sorting based on the uploaded Date, or Size  (B) 
+  // sorting based on the uploaded Date, or Size  (B) 
   const handleSortChange = (i) => {
     const option = i.target.value;
-    setSortOption(option);
-    getFiles(searchTerm, option, filterType);
+    dispatch(setSortOption(option));
   };
   // filtring is done on allowed Types so it will be fetched from array
   const handleFilterChange = (i) => {
     const type = i.target.value;
-    setFilterType(type);
-    getFiles(searchTerm, sortOption, type);
+    dispatch(setFilterType(type));
   };
 
   // drive has thumbnail and list view, will try 
   const handleViewModeChange = (i, newViewMode) => {
     if (newViewMode !== null) {
-      setViewMode(newViewMode);
+      dispatch(setViewMode(newViewMode));
     }
   };
 
@@ -487,6 +488,7 @@ function FileViewer({ page = 1, filesPerPage = 15, onPageChange }) {
             variant="outlined"
             fullWidth
             onChange={handleSearch}
+            value={searchTerm}
             InputProps={{
               style: {
                 height: "32px",

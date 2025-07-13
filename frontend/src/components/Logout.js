@@ -4,6 +4,11 @@ import byeGif from "./assets/bye.gif"; // Import the GIF
 import Footer from "./Footer";
 
 function Logout() {
+  const dispatch = useDispatch();
+  const handleLogout = () => {
+    dispatch(resetState());
+    persistor.purge();
+  };
   return (
     <>
       <Container style={{ marginTop: "88px", textAlign: "center" }}>
