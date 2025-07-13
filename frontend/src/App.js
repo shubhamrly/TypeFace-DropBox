@@ -16,7 +16,7 @@ import Logout from "./components/Logout";
 import Footer from "./components/Footer";
 import UserProfileMenu from "./components/UserProfileMenu";
 //Importing fro, .env file
-const API_BASE_URL = process.env.TYPEFACE_APP_API_BASE_URL;
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 function App() {
   const [files, setFiles] = useState([]);
