@@ -17,7 +17,7 @@ import Logout from "./components/Logout";
 import Footer from "./components/Footer";
 import UserProfileMenu from "./components/UserProfileMenu";
 //Importing fro, .env file
-const API_BASE_URL = process.env.TYPEFACE_APP_API_BASE_URL;
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 function App() {
   const [files, setFiles] = useState([]);
@@ -30,17 +30,15 @@ function App() {
   //for table view 
   const FILES_PER_PAGE = 15;
   const isLogoutPage = window.location.pathname === "/logout";
-   //start with 1
-  const getFilePage = async (pageNum = 1) => {
+   //start with 1 for viewing files in the ui, i am using the full data set to sort, filter. 
+  const getFilePage = async () => {
     try {
-      const res = await axios.get(
-        `${API_BASE_URL}/api/files?page=${pageNum}&limit=${FILES_PER_PAGE}`
-      );
-      setFiles(res.data.files);
-      setTotalFiles(res.data.total);
-      setIsbackendAvailable(true);
+      const res = await axios.get(`${API_BASE_URL}/api/files?all=true`); // Fetch all files
+      setFiles(res.data.files); // Store all files
+      setTotalFiles(res.data.total); // Set total file count
+      setBackendAvailable(true);
     } catch (error) {
-      setIsbackendAvailable(false);
+      setBackendAvailable(false);
     }
   };
   const uploadFiles = async () => {

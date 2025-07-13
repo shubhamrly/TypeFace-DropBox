@@ -41,6 +41,7 @@ import axios from "axios";
 import previewFallback from "./assets/previewfallback.jpg";
 import emptyTableImage from "./assets/emptyTable.png";
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+// FileViewer component displays files in search, sort, filter, and view mod
 function FileViewer({ page = 1, filesPerPage = 15, onPageChange }) {
   const navigate = useNavigate();
   const [files, setFiles] = useState([]);
@@ -55,11 +56,11 @@ function FileViewer({ page = 1, filesPerPage = 15, onPageChange }) {
   const [backendAvailable, setBackendAvailable] = useState(true);
   //get files form the app js function declaration
   useEffect(() => {
-    getFiles();
+    getFilePage();
   }, []);
 
   //for filtering changes
-  const getFiles = async (
+  const getFilePage = async (
     searchTerm = "",
     sortOption = "date",
     filterType = ""
@@ -94,19 +95,19 @@ function FileViewer({ page = 1, filesPerPage = 15, onPageChange }) {
   const handleSearch = (i) => {
     const term = i.target.value;
     setSearchTerm(term);
-    getFiles(term, sortOption, filterType);
+    getFilePage(term, sortOption, filterType);
   };
  // sorting based on the uploaded Date, or Size  (B) 
   const handleSortChange = (i) => {
     const option = i.target.value;
     setSortOption(option);
-    getFiles(searchTerm, option, filterType);
+    getFilePage(searchTerm, option, filterType);
   };
   // filtring is done on allowed Types so it will be fetched from array
   const handleFilterChange = (i) => {
     const type = i.target.value;
     setFilterType(type);
-    getFiles(searchTerm, sortOption, type);
+    getFilePage(searchTerm, sortOption, type);
   };
 
   // drive has thumbnail and list view, will try 
