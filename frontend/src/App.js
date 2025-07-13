@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import axios from "axios";
 import {
   Typography,
@@ -30,8 +30,10 @@ function App() {
   //for table view 
   const FILES_PER_PAGE = 15;
   const isLogoutPage = window.location.pathname === "/logout";
-   //start with 1 for viewing files in the ui, i am using the full data set to sort, filter. 
-  const getFilePage = async () => {
+  const fileViewerRef = useRef();
+
+  // useCallback to memoize getFilePage
+  const getFilePage = useCallback(async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/api/files?all=true`);
       setFiles(res.data.files);
@@ -40,16 +42,24 @@ function App() {
     } catch (error) {
       setIsbackendAvailable(false); 
     }
-  };
+  }, []);
+
   const uploadFiles = async () => {
     const formData = new FormData();
     selectedFiles.forEach((file) => formData.append("files", file));
     await axios.post(`${API_BASE_URL}/api/files/upload`, formData);
     getFilePage(page);
   };
+
+  const handleUploadSuccess = () => {
+    if (fileViewerRef.current) {
+      fileViewerRef.current();
+    }
+  };
+
   useEffect(() => {
-    getFilePage(page);
-  }, [page]);
+    getFilePage();
+  }, [getFilePage, page]);
 
   //on logo or TypeFace text click 
   const scrollToTop = () => {
@@ -67,7 +77,7 @@ function App() {
       >
         <Toolbar style={{ display: "flex", justifyContent: "space-between" }}>
           <span className="brand-title" onClick={scrollToTop}
-          style={{ color: "#222", cursor: "pointer" }}>
+          style={{ color: "#222", cursor: "pointer", left: "47px", fontWeight: "bold", position: "relative" }}>
             <img
               src={downloadIcon}
               alt="Dropbox Icon"
@@ -81,7 +91,9 @@ function App() {
             />
             TypeFace-Dropbox
           </span>
+          <span style={{ left: "-39px", position: "relative" }}>
           <UserProfileMenu isLogoutPage={isLogoutPage} />
+          </span>
         </Toolbar>
       </AppBar>
       <Routes>
@@ -102,7 +114,7 @@ function App() {
                   <FileUploader
                     setFiles={setSelectedFiles}
                     uploadFiles={uploadFiles}
-                    getFilePage={getFilePage}
+                    onUploadSuccess={handleUploadSuccess}
                   />
                 </Paper>
                 <Paper
@@ -114,11 +126,12 @@ function App() {
                   }}
                 >
                   <FileViewer
-                    files={files}
                     page={page}
                     totalFiles={totalFiles}
                     filesPerPage={FILES_PER_PAGE}
                     onPageChange={setPage}
+                    getFilePage={getFilePage}
+                    refreshFiles={fn => { fileViewerRef.current = fn; }}
                   />
                 </Paper>
               </Container>

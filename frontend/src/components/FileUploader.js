@@ -16,7 +16,7 @@ const allowedTypes = [
   'application/rtf'
 ];
 
-function FileUploader({ setFiles, uploadFiles, getFilePage }) {
+function FileUploader({ setFiles, uploadFiles, onUploadSuccess }) {
   const [errorMessage, setErrorMesssage] = useState('');
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -97,9 +97,9 @@ function FileUploader({ setFiles, uploadFiles, getFilePage }) {
         if (dropFileRef.current) dropFileRef.current.value = '';
         setSelectedFiles([]);
         setFiles([]);
-        
       }, 2000);
-      getFilePage();
+      // Call onUploadSuccess after upload completes
+      if (typeof onUploadSuccess === "function") onUploadSuccess();
     } catch (err) {
       setIsUploading(false);
       setUploadFailed(true);

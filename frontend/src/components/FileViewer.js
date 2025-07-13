@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Card,
   CardContent,
@@ -42,7 +42,7 @@ import previewFallback from "./assets/previewfallback.jpg";
 import emptyTableImage from "./assets/emptyTable.png";
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 // FileViewer component displays files in search, sort, filter, and view mod
-function FileViewer({ page = 1, filesPerPage = 15, onPageChange }) {
+function FileViewer({ page = 1, filesPerPage = 15, onPageChange, refreshFiles }) {
   const navigate = useNavigate();
   const [files, setFiles] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -54,13 +54,20 @@ function FileViewer({ page = 1, filesPerPage = 15, onPageChange }) {
   const [viewMode, setViewMode] = useState("thumbnail");
   const [totalFiles, setTotalFiles] = useState(0);
   const [backendAvailable, setBackendAvailable] = useState(true);
-  //get files form the app js function declaration
+  //get files after,upload form the app js function declaration
   useEffect(() => {
-    getFilePage();
+    getFilePageTable();
   }, []);
 
+  //get files after,upload form the app js function declaration
+  useEffect(() => {
+    if (typeof refreshFiles === "function") {
+      refreshFiles(getFilePageTable);
+    }
+  }, [refreshFiles]);
+
   //for filtering changes
-  const getFilePage = async (
+  const getFilePageTable = async (
     searchTerm = "",
     sortOption = "date",
     filterType = ""
@@ -95,19 +102,19 @@ function FileViewer({ page = 1, filesPerPage = 15, onPageChange }) {
   const handleSearch = (i) => {
     const term = i.target.value;
     setSearchTerm(term);
-    getFilePage(term, sortOption, filterType);
+    getFilePageTable(term, sortOption, filterType);
   };
  // sorting based on the uploaded Date, or Size  (B) 
   const handleSortChange = (i) => {
     const option = i.target.value;
     setSortOption(option);
-    getFilePage(searchTerm, option, filterType);
+    getFilePageTable(searchTerm, option, filterType);
   };
   // filtring is done on allowed Types so it will be fetched from array
   const handleFilterChange = (i) => {
     const type = i.target.value;
     setFilterType(type);
-    getFilePage(searchTerm, sortOption, type);
+    getFilePageTable(searchTerm, sortOption, type);
   };
 
   // drive has thumbnail and list view, will try 
@@ -169,6 +176,10 @@ function FileViewer({ page = 1, filesPerPage = 15, onPageChange }) {
     setInfoDialogOpen(false);
     setInfoFile(null);
   };
+
+  // Memoize files to only update UI when files actually change
+  const memoizedFiles = useMemo(() => files, [files]);
+
   return (
     <Box style={{ padding: "16px" }}>
       {}
@@ -264,7 +275,7 @@ function FileViewer({ page = 1, filesPerPage = 15, onPageChange }) {
         </Box>
       </Box>
       {}
-      {files.length === 0 ? (
+      {memoizedFiles.length === 0 ? (
         <Box
           sx={{
             textAlign: "center",
@@ -291,7 +302,7 @@ function FileViewer({ page = 1, filesPerPage = 15, onPageChange }) {
             gap: "16px",
           }}
         >
-          {files.map((file) => (
+          {memoizedFiles.map((file) => (
             <Paper
               elevation={3}
               key={file._id}
@@ -374,15 +385,15 @@ function FileViewer({ page = 1, filesPerPage = 15, onPageChange }) {
             <TableHead>
               <TableRow style={{ backgroundColor: "#f5f5f5" }}>
                 <TableCell style={{ width: "50px" }}></TableCell>
-                <TableCell>Name</TableCell>
-                <TableCell>Type</TableCell>
+                <TableCell style={{maxWidth: "300px"}}>Name</TableCell>
+               
                 <TableCell>Size</TableCell>
                 <TableCell>Uploaded</TableCell>
                 <TableCell align="center">Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {files.map((file) => (
+              {memoizedFiles.map((file) => (
                 <TableRow key={file._id} hover>
                   <TableCell>
                     <div
@@ -413,12 +424,13 @@ function FileViewer({ page = 1, filesPerPage = 15, onPageChange }) {
                   >
                     {file.originalName}
                   </TableCell>
-                  <TableCell>{file.fileType}</TableCell>
+                 
                   <TableCell>{(file.size / 1024).toFixed(2)} KB</TableCell>
                   <TableCell>
                     {new Date(file.uploadedDate).toLocaleString()}
                   </TableCell>
                   <TableCell align="center">
+                <div style={{ display: "flex", justifyContent: "center", gap: "8px" }}>
                     <Tooltip title="View">
                       <IconButton size="small" onClick={() => handleView(file)}>
                         <FaEye />
@@ -440,6 +452,7 @@ function FileViewer({ page = 1, filesPerPage = 15, onPageChange }) {
                         <FaInfoCircle />
                       </IconButton>
                     </Tooltip>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}
