@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
-  sortOption: "date-1",
+  sortOption: "date-2",
   filterType: "",
   searchTerm: "",
   viewMode: "thumbnail",

@@ -14,7 +14,7 @@ function Logout() {
   }, [dispatch]);
   return (
     <>
-      <Container style={{ marginTop: "88px", textAlign: "center" }}>
+      <Container style={{ marginTop: "88px", textAlign: "center",marginBottom: "120px" }}>
         <img
           src={byeGif}
           alt="Bye GIF"

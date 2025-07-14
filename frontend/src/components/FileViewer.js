@@ -64,7 +64,7 @@ const iconColors = {
 };
 
 //table view, oer page 15 then on page change find more 
-function FileViewer({ page = 1, filesPerPage = 15, onPageChange }) {
+function FileViewer({ page = 1, filesPerPage = 15, onPageChange, refreshFiles }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { sortOption, filterType, searchTerm, viewMode } = useSelector(
@@ -88,6 +88,13 @@ function FileViewer({ page = 1, filesPerPage = 15, onPageChange }) {
   useEffect(() => {
     getFiles();
   }, [searchTerm, sortOption, filterType]);
+  
+  //to get the latest
+  useEffect(() => {
+    if (typeof refreshFiles === "function") {
+      refreshFiles(getFiles);
+    }
+  }, [refreshFiles]);
   
   const getFiles = async () => {
     try {
