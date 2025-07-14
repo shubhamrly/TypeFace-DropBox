@@ -80,8 +80,8 @@ Please refer to request.http for comprehensive HTTP request method.
 
 
 ## Screenshots
-Please refer to the Demo.pdf file in root directory
-sample file contains the sample images for upload.
+1.Please refer to the Demo.pdf file in root directory,
+2.Sample folder contains the sample files for upload.
 
 ## Resources Used
 1. My Design:
