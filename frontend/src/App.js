@@ -108,7 +108,7 @@ function App() {
             <>
               <Container style={{ marginTop: "88px", textAlign: "center" }}>
                 {!IsbackendAvailable && (
-                  <Alert severity="warning" style={{ marginBottom: "16px" }}>
+                  <Alert severity="warning" style={{ marginBottom: "16px",fontWeight:"bold" }}>
                     Please Check backend at base URL,Backend is not available. 
                   </Alert>
                 )}

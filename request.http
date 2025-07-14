@@ -1,0 +1,31 @@
+IMPORTANT: The original file name is stored as metadata in MongoDB, but all file operations use the UUID filename.
+
+# 1. Upload files (multiple files -F supported).
+curl -F "files=@/path/to/file1.txt" -F "files=@/path/to/file2.jpg" http://localhost:5000/api/files/upload
+
+# 2. Get list of all files.
+curl http://localhost:5000/api/files
+
+#    Get all files.
+curl http://localhost:5000/api/files?all=true
+
+#    Get paginated files (page and limts).
+curl "http://localhost:5000/api/files?page=2&limit=10"
+
+# 3. Get a single file preview or download (replace <filename> with actual file UUID name),
+#    Preview in browser: 
+       1.http://localhost:5000/api/files/<filename>
+
+#    Download with curl:
+curl -O http://localhost:5000/api/files/<filename>
+
+
+// Update the meta Data in the mongodb.
+# 4. Rename a file (replace <filename> and <newName>).
+curl -X PUT -H "Content-Type: application/json" \
+     -d '{"newName":"newfilename.txt"}' \
+     http://localhost:5000/api/files/<filename>/rename
+
+# 5. Delete a file (replace <filename>).
+curl -X DELETE http://localhost:5000/api/files/<filename>
+
