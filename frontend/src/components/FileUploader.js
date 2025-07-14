@@ -257,6 +257,7 @@ function FileUploader({ setFiles, uploadFiles, onUploadSuccess }) {
             inputProps={{
               multiple: true,
               accept: allowedTypes.join(","),
+              "data-testid": "file-input",
             }}
           />
           {}
