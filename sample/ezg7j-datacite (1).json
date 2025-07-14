@@ -1,0 +1,86 @@
+{
+  "alternateIdentifiers": [
+    {
+      "alternateIdentifier": "https://osf.io/ezg7j",
+      "alternateIdentifierType": "URL"
+    }
+  ],
+  "contributors": [
+    {
+      "contributorName": {
+        "contributorName": "Center for Open Science",
+        "nameType": "Organizational"
+      },
+      "contributorType": "HostingInstitution",
+      "nameIdentifier": {
+        "nameIdentifier": "https://ror.org/05d5mza29",
+        "nameIdentifierScheme": "ROR"
+      }
+    }
+  ],
+  "creators": [
+    {
+      "creatorName": {
+        "creatorName": "Sabine Windmann",
+        "nameType": "Personal"
+      },
+      "nameIdentifier": {
+        "nameIdentifier": "https://osf.io/f8q23",
+        "nameIdentifierScheme": "URL"
+      }
+    }
+  ],
+  "dates": [
+    {
+      "date": "2020-01-21",
+      "dateType": "Created"
+    },
+    {
+      "date": "2020-06-21",
+      "dateType": "Updated"
+    }
+  ],
+  "descriptions": [],
+  "fundingReferences": [],
+  "identifier": {
+    "identifier": "https://osf.io/ezg7j",
+    "identifierType": "URL"
+  },
+  "publicationYear": "2020",
+  "publisher": "OSF",
+  "relatedIdentifiers": [
+    {
+      "relatedIdentifier": "10.17605/OSF.IO/MTZAX",
+      "relatedIdentifierType": "DOI",
+      "relationType": "IsPartOf"
+    }
+  ],
+  "relatedItems": [
+    {
+      "publicationYear": "2019",
+      "publisher": "OSF",
+      "relatedItemIdentifier": {
+        "relatedItemIdentifier": "10.17605/OSF.IO/MTZAX",
+        "relatedItemIdentifierType": "DOI"
+      },
+      "relatedItemType": "Text",
+      "relationType": "IsPartOf",
+      "titles": [
+        {
+          "title": "Generating the face of a character"
+        }
+      ]
+    }
+  ],
+  "resourceType": {
+    "resourceType": "File",
+    "resourceTypeGeneral": "Text"
+  },
+  "rightsList": [],
+  "subjects": [],
+  "titles": [
+    {
+      "title": "Pictures with faces.zip"
+    }
+  ]
+}
