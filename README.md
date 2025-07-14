@@ -36,32 +36,46 @@ A full-stack Dropbox clone using ReactJS for the frontend, Redux for state manag
 ## Application Setup: 
 Requirements: Node.js, Docker, VsCode. 
 1. Run local mongodb setup: 
-   a. cd TypeFace-DropBox
-   b. chmod +x mongoSetup.sh 
-   c. ./mongoSetup.sh
+   
+          cd TypeFace-DropBox
+   
+          chmod +x mongoSetup.sh 
+   
+          ./mongoSetup.sh
 
 2. Setup Frontend,
-   a. cd frontend
-   b. npm install
-   c. npm start 
-      i.  npm test 
+   
+       cd frontend
+   
+       npm install
+   
+       npm start 
+      
+       npm test 
 
-   server will start at port 3000.
+   server will start at port **3000**.
 
 3. Setup backend,
-   a. cd backend
-   b. npm install
-   c. node server.js
-      i.  npm test
-      ii. npx jest --coverage
+      
+       cd backend
+      
+       npm install
+      
+       node server.js
+      
+       npm test
+       
+       npx jest --coverage
 
-   server will start at port 5000.
+   server will start at port **5000**.
 
 ## Project Structure
 ```
-/frontend   # ReactJS frontend
-/backend    # NodeJS backend (Express)
-/mongoSetup.sh # MongoDB setup script
+  /frontend         # ReactJS frontend
+  
+  /backend          # NodeJS backend (Express)
+  
+  /mongoSetup.sh    # MongoDB setup script
 ```
 ### Notes on Storage
 
@@ -80,11 +94,14 @@ Please refer to request.http for comprehensive HTTP request method.
 
 
 ## Screenshots
-1.Please refer to the Demo.pdf file in root directory,
+1.Please refer to the **Demo.pdf** file in root directory,
+
 2.Sample folder contains the sample files for upload.
 
 ## Resources Used
 1. My Design:
     https://www.canva.com/design/DAGtFAIvdoU/PuQ79IzXcomVspbVJl0z4A/edit?utm_content=DAGtFAIvdoU&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton
+
 2. Google images.
+
 3. https://daily.dev/blog/test-cases-for-react-js-a-starter-guide
