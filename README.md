@@ -1,5 +1,5 @@
 ## TypeFace-DropBox
-A full-stack Dropbox clone using ReactJS for the frontend, Node.js for the backend, and MongoDB for meta-data and local FMS for storage.
+A full-stack Dropbox clone using ReactJS for the frontend, Redux for state management, Node.js for the backend, and MongoDB for meta-data and local FMS for storage.
 
 ## Base Functionilty: CRUD operation:
 1. Upload a file resource.
@@ -31,6 +31,7 @@ A full-stack Dropbox clone using ReactJS for the frontend, Node.js for the backe
     b. Sign-out button.
 4. A footer component that shows placeholder text.
 5. A logout page which shows a good-bye message.
+6. Redux for state management and redux persistance for redux persistance.
 
 ## Application Setup: 
 Requirements: Node.js, Docker, VsCode. 
