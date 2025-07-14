@@ -7,7 +7,7 @@ describe("Footer", () => {
   it("renders the assignment notice", () => {
     render(<Footer />);
     expect(
-      screen.getByText(/Sample for assignment, Edu use only/i)
+      screen.getByText(/Sample for assignment, Edu use only./i)
     ).toBeInTheDocument();
   });
 });

@@ -1,20 +1,19 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import { MemoryRouter } from "react-router-dom";
+import { BrowserRouter } from "react-router-dom";
 import FileView from "../components/FileView";
 
 describe("FileView", () => {
   it("renders the file name", () => {
     const file = {
-      filename: "abc123.pdf",
-      originalName: "My File.pdf"
+      originalName: "SampleFile.pdf",
     };
     render(
-      <MemoryRouter>
+      <BrowserRouter>
         <FileView file={file} />
-      </MemoryRouter>
+      </BrowserRouter>
     );
-    expect(screen.getByText(/my file\.pdf/i)).toBeInTheDocument();
+    expect(screen.getByText(/SampleFile\.pdf/i)).toBeInTheDocument();
   });
 });

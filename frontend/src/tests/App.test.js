@@ -31,8 +31,7 @@ describe("App", () => {
   it("renders the welcome page by default", () => {
     renderWithProviders(<App />);
     expect(screen.getByText(/TypeFace-Dropbox/i)).toBeInTheDocument();
-    // Adjust this line if your Welcome page text is different
-    // expect(screen.getByText(/Easily upload, store, and share/i)).toBeInTheDocument();
+    expect(screen.getByText(/Easily upload, store, and share/i)).toBeInTheDocument();
   });
 
   it("shows backend warning if API call fails", async () => {

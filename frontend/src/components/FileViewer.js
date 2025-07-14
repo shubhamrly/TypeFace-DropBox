@@ -569,7 +569,7 @@ function FileViewer({ page = 1, filesPerPage = 15, onPageChange, refreshFiles })
         >
           <img
             src={emptyTableImage}
-            alt="No files found"
+            alt="No-files-found"
             style={{
               maxWidth: "46%",
               height: "151px",

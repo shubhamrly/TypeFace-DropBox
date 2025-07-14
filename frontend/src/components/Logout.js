@@ -17,7 +17,7 @@ function Logout() {
       <Container style={{ marginTop: "88px", textAlign: "center",marginBottom: "120px" }}>
         <img
           src={byeGif}
-          alt="Bye GIF"
+          alt="bye-GIF"
           style={{
             marginTop: "16px",
             width: "500px",

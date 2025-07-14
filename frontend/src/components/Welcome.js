@@ -22,7 +22,7 @@ function Welcome() {
       >
         <img
           src={welcomeImage}
-          alt="Welcome"
+          alt="welcome-image"
           style={{
             width: "90%",
             maxWidth: "400px",

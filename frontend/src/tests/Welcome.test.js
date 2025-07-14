@@ -11,9 +11,8 @@ describe("Welcome", () => {
         <Welcome />
       </BrowserRouter>
     );
-    expect(screen.getByAltText(/welcome/i)).toBeInTheDocument();
-    expect(
-      screen.getByText(/Easily upload, store, and share your documents and do much more/i)
-    ).toBeInTheDocument();
+
+    expect(screen.getByAltText(/welcome-image/i)).toBeInTheDocument();
+    expect(screen.getByText(/Easily upload, store, and share your documents and do much more./i)).toBeInTheDocument();
   });
 });
