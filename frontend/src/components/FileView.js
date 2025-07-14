@@ -2,19 +2,14 @@ import React,{useState} from "react";
 import { Card, CardContent, Typography, Paper, Box } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import previewFallback from "./assets/previewfallback.jpg";
-import IconButton from "@mui/material/IconButton";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 function FiewView({ file }) {
-    //same as FileViewer.js 
     const [anchorEl, setAnchorEl] = useState(null);
      const [renameDialogOpen, setRenameDialogOpen] = useState(false);
      const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
      const [newFileName, setNewFileName] = useState(file.originalName);
- 
   const navigate = useNavigate();
-  // preview api call for card content.
   const renderPreview = () => (
     <div
       style={{
@@ -35,62 +30,47 @@ function FiewView({ file }) {
       />
     </div>
   );
-  // Handle menu open
+  //handle clicks on icons
   const handleMenuClick = (event) => {
     event.stopPropagation();
     setAnchorEl(event.currentTarget);
   };
-
-  // Handle menu close
   const handleMenuClose = (event) => {
     if (event) event.stopPropagation();
     setAnchorEl(null);
   };
-
-  // Handle rename dialog
   const handleRenameClick = (event) => {
     event.stopPropagation();
     handleMenuClose();
     setRenameDialogOpen(true);
   };
-
   const handleRenameClose = (event) => {
     if (event) event.stopPropagation();
     setRenameDialogOpen(false);
   };
-
   const handleRenameSubmit = (event) => {
     if (event) event.stopPropagation();
-    // Here you would implement the API call to rename the file
     console.log(`Renaming file ${file.filename} to ${newFileName}`);
     setRenameDialogOpen(false);
   };
-
-  // Handle delete dialog
   const handleDeleteClick = (event) => {
     event.stopPropagation();
     handleMenuClose();
     setDeleteDialogOpen(true);
   };
-
   const handleDeleteClose = (event) => {
     if (event) event.stopPropagation();
     setDeleteDialogOpen(false);
   };
-
   const handleDeleteConfirm = (event) => {
     if (event) event.stopPropagation();
-    // Here you would implement the API call to delete the file
     console.log(`Deleting file ${file.filename}`);
     setDeleteDialogOpen(false);
   };
-
-  // card click preview if possible in browser, get file name from mongo
   const handleFileClick = () => {
     const url = `${window.location.origin}/view/${file.filename}`;
     window.open(url, "_blank", "noopener,noreferrer");
   };
-
   return (
     <Paper
       elevation={3}
@@ -98,19 +78,6 @@ function FiewView({ file }) {
       onClick={handleFileClick}
     >
       <Card style={{ position: "relative" }}>
-         <IconButton
-          size="small"
-          style={{
-            position: "absolute",
-            top: 5,
-            right: 5,
-            zIndex: 10,
-            backgroundColor: "rgba(255, 255, 255, 0.7)",
-          }}
-          onClick={handleMenuClick}
-        >
-          <MoreVertIcon />
-        </IconButton>
         {renderPreview()}
         <CardContent style={{ textAlign: "center" }}>
           <Typography
@@ -134,8 +101,7 @@ function FiewView({ file }) {
           Delete
         </MenuItem>
       </Menu>
-
-      {/* Rename Dialog */}
+      {}
       <Dialog
         open={renameDialogOpen}
         onClose={handleRenameClose}
@@ -165,8 +131,7 @@ function FiewView({ file }) {
           </Button>
         </DialogActions>
       </Dialog>
-
-      {/* Delete Confirmation Dialog */}
+      {}
       <Dialog
         open={deleteDialogOpen}
         onClose={handleDeleteClose}
@@ -191,5 +156,4 @@ function FiewView({ file }) {
     </Paper>
   );
 }
-
 export default FiewView;

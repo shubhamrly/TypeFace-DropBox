@@ -6,19 +6,15 @@ import { useDispatch } from "react-redux";
 import { resetState } from "./fileViewerSlice";
 import { persistor } from "./store";
 import UserProfileMenu from "./UserProfileMenu";
-
 function Logout() {
   const dispatch = useDispatch();
-
   useEffect(() => {
-    // Clear state on component mount
     dispatch(resetState());
     persistor.purge();
   }, [dispatch]);
-
   return (
     <>
-      <Container style={{ marginTop: "88px", textAlign: "center" }}>
+      <Container style={{ marginTop: "88px", textAlign: "center",marginBottom: "120px" }}>
         <img
           src={byeGif}
           alt="Bye GIF"
@@ -34,5 +30,4 @@ function Logout() {
     </>
   );
 }
-
 export default Logout;

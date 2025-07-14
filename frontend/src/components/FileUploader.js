@@ -4,8 +4,11 @@ import uploadIcon from "./assets/upload-icon.gif";
 import uploadCompletedIcon from "./assets/uploadComplete.gif";
 import uploadFailedIcon from "./assets/uploadFailed.gif";
 import axios from "axios";
-const MAX_FILES_LIMIT = 15;
+
+//limit
+const maxFileLimit = process.env.REACT_APP_MAX_FILE_LIMIT || 15;
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+//mimeControl
 const allowedTypes = [
   "image/jpeg",
   "image/png",
@@ -14,6 +17,8 @@ const allowedTypes = [
   "application/pdf",
   "application/rtf",
 ];
+
+
 function FileUploader({ setFiles, uploadFiles, onUploadSuccess }) {
   const [errorMessage, setErrorMesssage] = useState("");
   const [isUploading, setIsUploading] = useState(false);
@@ -23,21 +28,15 @@ function FileUploader({ setFiles, uploadFiles, onUploadSuccess }) {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [dragActive, setDragActive] = useState(false);
   const [isDraggingOverWindow, setIsDraggingOverWindow] = useState(false);
+  // to track file ref in dom
   const dropFileRef = useRef(null);
-  useEffect(() => {
-    const handleWindowDragEnter = (e) => {
-      e.preventDefault();
-      setIsDraggingOverWindow(true);
-    };
-    window.addEventListener("dragenter", handleWindowDragEnter);
-    return () => {
-      window.removeEventListener("dragenter", handleWindowDragEnter);
-    };
-  }, []);
-  const handleFileChange = (e) => {
-    const files = Array.from(e.target.files);
-    if (selectedFiles.length + files.length > MAX_FILES_LIMIT) {
-      setErrorMesssage(`${MAX_FILES_LIMIT} files allowed at a time.`);
+  
+
+  // for the file selection 
+  const handleFileChange = (i) => {
+    const files = Array.from(i.target.files);
+    if (selectedFiles.length + files.length > maxFileLimit) {
+      setErrorMesssage(`${maxFileLimit} files allowed at a time.`);
       setTimeout(() => setErrorMesssage(""), 2000);
       return;
     }
@@ -53,26 +52,38 @@ function FileUploader({ setFiles, uploadFiles, onUploadSuccess }) {
       );
     }
   };
-  const handleDragOver = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
+  //drag to entire screen 
+  useEffect(() => {
+    const handleWindowDragEnter = (i) => {
+      i.preventDefault();
+      setIsDraggingOverWindow(true);
+    };
+    window.addEventListener("dragenter", handleWindowDragEnter);
+    return () => {
+      window.removeEventListener("dragenter", handleWindowDragEnter);
+    };
+  }, []);
+
+  const handleDragOver = (i) => {
+    i.preventDefault();
+    i.stopPropagation();
     setDragActive(true);
-  };
-  const handleDragLeave = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.currentTarget === e.target) {
+  }; 
+  const handleDragLeave = (i) => {
+    i.preventDefault();
+    i.stopPropagation();
+    if (i.currentTarget === i.target) {
       setDragActive(false);
       setIsDraggingOverWindow(false);
     }
   };
-  const handleDrop = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const handleDrop = (i) => {
+    i.preventDefault();
+    i.stopPropagation();
     setDragActive(false);
-    const files = Array.from(e.dataTransfer.files);
-    if (selectedFiles.length + files.length > MAX_FILES_LIMIT) {
-      setErrorMesssage(`${MAX_FILES_LIMIT} files allowed at a time.`);
+    const files = Array.from(i.dataTransfer.files);
+    if (selectedFiles.length + files.length > maxFileLimit) {
+      setErrorMesssage(`${maxFileLimit} files allowed at a time.`);
       setTimeout(() => setErrorMesssage(""), 2200);
       return;
     }
@@ -91,6 +102,8 @@ function FileUploader({ setFiles, uploadFiles, onUploadSuccess }) {
   const handleClickDropArea = () => {
     if (dropFileRef.current) dropFileRef.current.click();
   };
+
+  //upload button
   const handleSubmit = async () => {
     if (selectedFiles.length === 0) {
       setErrorMesssage("Select some files before submitting.");
@@ -125,6 +138,8 @@ function FileUploader({ setFiles, uploadFiles, onUploadSuccess }) {
       }, 2500);
     }
   };
+
+  //array indexing to remove in o(1) time 
   const handleRemoveFile = (indexToRemove) => {
     const updatedFiles = selectedFiles.filter(
       (_, idx) => idx !== indexToRemove
@@ -139,19 +154,16 @@ function FileUploader({ setFiles, uploadFiles, onUploadSuccess }) {
         <div
           style={{
             position: "fixed",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
             width: "100vw",
+            color: "rgba(0, 0, 0, 0.5)",
             height: "100vh",
-            zIndex: 9999,
+            zIndex: 9999, // z-index elevated
             pointerEvents: "all",
           }}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
-          onDrop={(e) => {
-            handleDrop(e);
+          onDrop={(i) => {
+            handleDrop(i);
             setIsDraggingOverWindow(false);
           }}
         />
@@ -161,7 +173,7 @@ function FileUploader({ setFiles, uploadFiles, onUploadSuccess }) {
         flexDirection="column"
         alignItems="center"
         justifyContent="center"
-        style={{ marginTop: "50px" }}
+        style={{ marginTop: "10px" }}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
@@ -170,23 +182,23 @@ function FileUploader({ setFiles, uploadFiles, onUploadSuccess }) {
           onClick={handleClickDropArea}
           sx={{
             border: dragActive
-              ? "2px solid rgb(13, 124, 242)"
-              : "2px dashed #bbb",
-            borderRadius: "10px",
+              ? "1px solid rgb(0, 3, 189)"
+              : "3px dashed #bbb",
+            borderRadius: "13px",
             background: dragActive ? "#e3f2fd" : "#fafafa",
             padding: "18px 12px 10px 12px",
-            marginBottom: "10px",
-            width: "240px",
+            
+            width: "340px",
             minHeight: "180px",
             textAlign: "center",
             cursor: "pointer",
-            transition: "border 0.3s, background 0.2s",
+            transition: "border 0.4s, background 0.3s",
             position: "relative",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "flex-start",
-            animation: dragActive ? "fade-in 0.3s" : "none",
+            animation: dragActive ? "fade-in 0.4s" : "none",
           }}
         >
           {}
@@ -205,16 +217,16 @@ function FileUploader({ setFiles, uploadFiles, onUploadSuccess }) {
               marginBottom: "8px",
               opacity: 0.9,
             }}
-            onMouseOver={(e) => {
-              if (!isUploading) e.target.style.transform = "scale(1.1)";
+            onMouseOver={(i) => {
+              if (!isUploading) i.target.style.transform = "scale(1.1)";
             }}
-            onMouseOut={(e) => {
-              if (!isUploading) e.target.style.transform = "scale(1.0)";
+            onMouseOut={(i) => {
+              if (!isUploading) i.target.style.transform = "scale(1.0)";
             }}
           />
           <Typography
             variant="body1"
-            sx={{ color: "#555", fontSize: "0.95em", fontWeight: 500 }}
+            sx={{ color: "#555", fontSize: "0.95em", fontWeight: 700 }}
           >
             Drag &amp; drop files here
           </Typography>
@@ -279,7 +291,7 @@ function FileUploader({ setFiles, uploadFiles, onUploadSuccess }) {
             <Typography
               variant="body1"
               sx={{
-                mb: 1,
+                
                 textAlign: "center",
                 fontWeight: 500,
                 fontSize: "1em",
@@ -291,7 +303,7 @@ function FileUploader({ setFiles, uploadFiles, onUploadSuccess }) {
               sx={{
                 display: "flex",
                 flexWrap: "wrap",
-                gap: "6px",
+                gap: "4px",
                 justifyContent: "flex-start",
                 alignItems: "flex-start",
                 minHeight: "32px",
@@ -303,8 +315,8 @@ function FileUploader({ setFiles, uploadFiles, onUploadSuccess }) {
                   sx={{
                     display: "flex",
                     alignItems: "center",
-                    background: "#e3f2fd",
-                    borderRadius: "4px",
+                    background: "lightblue",
+                    borderRadius: "5px",
                     padding: "2px 8px",
                     marginBottom: "4px",
                     maxWidth: "98ch",
@@ -330,14 +342,14 @@ function FileUploader({ setFiles, uploadFiles, onUploadSuccess }) {
                     color="error"
                     sx={{
                       minWidth: "24px",
-                      padding: "0 4px",
+                      
                       marginLeft: "6px",
-                      fontSize: "1em",
+                      fontSize: "1.5em",
                       lineHeight: 1,
                       height: "24px",
                     }}
-                    onClick={(e) => {
-                      e.stopPropagation();
+                    onClick={(i) => {
+                      i.stopPropagation();
                       handleRemoveFile(index);
                     }}
                   >
