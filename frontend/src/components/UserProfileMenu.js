@@ -9,9 +9,11 @@ function UserProfileMenu() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Determine which page we're on
+  // url location chcek
   const isWelcomePage = location.pathname === "/" || location.pathname === "/welcome";
   const isLogoutPage = location.pathname === "/logout";
+
+
 
   const handleAvatarClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -60,7 +62,7 @@ function UserProfileMenu() {
           Sign In
         </Button>
       ) : (
-        // On home page and other pages, show user icon with dropdown
+        //in /home, use profile dropdown and in rest use signin
         <>
           <IconButton onClick={handleAvatarClick}>
             <FaUserSecret style={{ fontSize: 32, color: "rgb(254 36 61)" }} />
@@ -71,12 +73,10 @@ function UserProfileMenu() {
             onClose={handleMenuClose}
           >
             <MenuItem onClick={handleMenuClose}>
-              <MdEmail style={{ fontSize: 20, color: "#1976d2", marginRight: 8 }} />
-              {process.env.REACT_APP_USER_EMAIL || "shubhamgh00@gmail.com"}
+              <MdEmail style={{ fontSize: 18, color: "blue", marginRight: 2 }} />: {process.env.REACT_APP_USER_EMAIL || "shubhamgh00@gmail.com"}
             </MenuItem>
             <MenuItem onClick={() => handleNavigation("/logout")}>
-              <MdLogout style={{ fontSize: 20, color: "#fe243d", marginRight: 8 }} />
-              Sign Out
+              <MdLogout style={{ fontSize: 18, color: "red", marginRight: 2}} />: Sign Out
             </MenuItem>
           </Menu>
         </>

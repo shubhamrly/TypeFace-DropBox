@@ -54,7 +54,8 @@ import {
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
-export const iconColors = {
+//icon colors
+const iconColors = {
   view: "rgb(21, 158, 60)",
   download: "rgb(62, 0, 148)",
   info: "rgb(0, 123, 255)",
@@ -62,6 +63,7 @@ export const iconColors = {
   delete: "rgb(244, 67, 54)",
 };
 
+//table view, oer page 15 then on page change find more 
 function FileViewer({ page = 1, filesPerPage = 15, onPageChange }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -82,13 +84,11 @@ function FileViewer({ page = 1, filesPerPage = 15, onPageChange }) {
   const [alertMessage, setAlertMessage] = useState("");
   const [alertType, setAlertType] = useState("success");
   const [alertOpen, setAlertOpen] = useState(false);
-
-  //get files form the app js function declaration
+ 
   useEffect(() => {
     getFiles();
   }, [searchTerm, sortOption, filterType]);
-
-  //for filtering changes
+  
   const getFiles = async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/api/files?all=true`);
@@ -101,6 +101,7 @@ function FileViewer({ page = 1, filesPerPage = 15, onPageChange }) {
       if (filterType) {
         allFiles = allFiles.filter((file) => file.fileType === filterType);
       }
+      //sorting in the date and size
       allFiles = allFiles.sort((a, b) => {
         if (sortOption === "date-2") {
           return new Date(b.uploadedDate) - new Date(a.uploadedDate);
@@ -120,30 +121,26 @@ function FileViewer({ page = 1, filesPerPage = 15, onPageChange }) {
       setBackendAvailable(false);
     }
   };
-  // matching from the original name of the file uploaded
+  // search and all menu  is in redux persistance
   const handleSearch = (i) => {
     const term = i.target.value;
     dispatch(setSearchTerm(term));
   };
-  // sorting based on the uploaded Date, or Size  (B) 
   const handleSortChange = (i) => {
     const option = i.target.value;
     dispatch(setSortOption(option));
   };
-  // filtring is done on allowed Types so it will be fetched from array
   const handleFilterChange = (i) => {
     const type = i.target.value;
     dispatch(setFilterType(type));
   };
-
-  // drive has thumbnail and list view, will try 
   const handleViewModeChange = (i, newViewMode) => {
     if (newViewMode !== null) {
       dispatch(setViewMode(newViewMode));
     }
   };
 
-  // using cardContent mui 
+  // for thumbhnails
   const renderPreview = (file) => (
     <div
       style={{
@@ -164,9 +161,11 @@ function FileViewer({ page = 1, filesPerPage = 15, onPageChange }) {
       />
     </div>
   );
+  // in new tab
   const handleView = (file) => {
     window.open(`${API_BASE_URL}/api/files/preview/${file.filename}`, "_blank");
   };
+  // calling servicee to make a blob
   const handleDownload = async (file) => {
     try {
       const response = await fetch(
@@ -187,6 +186,7 @@ function FileViewer({ page = 1, filesPerPage = 15, onPageChange }) {
       setBackendWarning(true);
     }
   };
+  //mongo call
   const handleInfoOpen = (file) => {
     setInfoFile(file);
     setInfoDialogOpen(true);
@@ -195,32 +195,29 @@ function FileViewer({ page = 1, filesPerPage = 15, onPageChange }) {
     setInfoDialogOpen(false);
     setInfoFile(null);
   };
+
+  // mongo changes only
   const handleRenameClick = (file, event) => {
     if (event) event.stopPropagation();
     setFileToRename(file);
     setNewFileName(file.originalName);
     setRenameDialogOpen(true);
   };
-
   const handleDeleteClick = (file, event) => {
     if (event) event.stopPropagation();
     setFileToDelete(file);
     setDeleteDialogOpen(true);
   };
-
   const handleRenameFile = async () => {
     try {
       const response = await axios.put(
         `${API_BASE_URL}/api/files/rename/${fileToRename.filename}`,
         { newName: newFileName }
       );
-      
-      // Update file list with renamed file
       const updatedFiles = files.map((file) => 
         file._id === response.data._id ? { ...file, originalName: newFileName } : file
       );
       setFiles(updatedFiles);
-      
       setRenameDialogOpen(false);
       setAlertType("success");
       setAlertMessage("File renamed successfully");
@@ -231,16 +228,12 @@ function FileViewer({ page = 1, filesPerPage = 15, onPageChange }) {
       setAlertOpen(true);
     }
   };
-
   const handleDeleteFile = async () => {
     try {
       await axios.delete(`${API_BASE_URL}/api/files/${fileToDelete.filename}`);
-      
-      // Remove deleted file from list
       const updatedFiles = files.filter((file) => file._id !== fileToDelete._id);
       setFiles(updatedFiles);
       setTotalFiles(totalFiles - 1);
-      
       setDeleteDialogOpen(false);
       setAlertType("success");
       setAlertMessage("File deleted successfully");
@@ -251,8 +244,7 @@ function FileViewer({ page = 1, filesPerPage = 15, onPageChange }) {
       setAlertOpen(true);
     }
   };
-  
-  // Add the actions for the thumbnail view
+//render icons
   const renderFileActions = (file) => (
     <Box
       style={{
@@ -322,7 +314,7 @@ function FileViewer({ page = 1, filesPerPage = 15, onPageChange }) {
     </Box>
   );
 
-  // Update the thumbnail card content to use the new actions function
+  //view mode
   const renderThumbnailView = () => (
     <Box
       style={{
@@ -365,7 +357,6 @@ function FileViewer({ page = 1, filesPerPage = 15, onPageChange }) {
     </Box>
   );
 
-  // Update the list view to include rename and delete actions
   const renderListView = () => (
     <TableContainer component={Paper} style={{ marginBottom: "16px" }}>
       <Table size="small">
@@ -373,7 +364,6 @@ function FileViewer({ page = 1, filesPerPage = 15, onPageChange }) {
           <TableRow style={{ backgroundColor: "#f5f5f5" }}>
             <TableCell style={{ width: "50px" }}></TableCell>
             <TableCell>Name</TableCell>
-            
             <TableCell>Size</TableCell>
             <TableCell>Uploaded</TableCell>
             <TableCell align="center">Actions</TableCell>
@@ -411,7 +401,6 @@ function FileViewer({ page = 1, filesPerPage = 15, onPageChange }) {
               >
                 {file.originalName}
               </TableCell>
-             
               <TableCell>{(file.size / 1024).toFixed(2)} KB</TableCell>
               <TableCell>
                 {new Date(file.uploadedDate).toLocaleString()}
@@ -463,6 +452,7 @@ function FileViewer({ page = 1, filesPerPage = 15, onPageChange }) {
       </Table>
     </TableContainer>
   );
+
 
   return (
     <Box style={{ padding: "16px" }}>
@@ -521,7 +511,6 @@ function FileViewer({ page = 1, filesPerPage = 15, onPageChange }) {
             <MenuItem value="date-2">DESC Date</MenuItem>
             <MenuItem value="size-2">ASC Size</MenuItem>
             <MenuItem value="size-1">DESC Size</MenuItem>
-            
           </Select>
         </Box>
         {}
@@ -628,7 +617,7 @@ function FileViewer({ page = 1, filesPerPage = 15, onPageChange }) {
         </DialogContent>
       </Dialog>
       {}
-      {/* Rename Dialog */}
+      {}
       <Dialog open={renameDialogOpen} onClose={() => setRenameDialogOpen(false)}>
         <DialogTitle>Rename File</DialogTitle>
         <DialogContent>
@@ -651,13 +640,12 @@ function FileViewer({ page = 1, filesPerPage = 15, onPageChange }) {
           </Button>
         </DialogActions>
       </Dialog>
-      
-      {/* Delete Confirmation Dialog */}
+      {}
       <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
         <DialogTitle>Delete File</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Are you sure you want to delete "{fileToDelete?.originalName}"? This action cannot be undone.
+            Are you sure you want to delete "{fileToDelete?.originalName}"? This deletes file parmanently.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -667,11 +655,10 @@ function FileViewer({ page = 1, filesPerPage = 15, onPageChange }) {
           </Button>
         </DialogActions>
       </Dialog>
-      
-      {/* Alert Snackbar */}
+      {}
       <Snackbar
         open={alertOpen}
-        autoHideDuration={3000}
+        autoHideDuration={2200}
         onClose={() => setAlertOpen(false)}
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       >
@@ -679,11 +666,10 @@ function FileViewer({ page = 1, filesPerPage = 15, onPageChange }) {
           {alertMessage}
         </Alert>
       </Snackbar>
-      
-      {/* Existing backend warning snackbar */}
+      {}
       <Snackbar
         open={backendWarning}
-        autoHideDuration={2000}
+        autoHideDuration={2200}
         onClose={() => setBackendWarning(false)}
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       >
@@ -694,5 +680,4 @@ function FileViewer({ page = 1, filesPerPage = 15, onPageChange }) {
     </Box>
   );
 }
-
 export default FileViewer;

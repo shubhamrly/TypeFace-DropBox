@@ -17,7 +17,8 @@ import Logout from "./components/Logout";
 import Welcome from "./components/Welcome";
 import Footer from "./components/Footer";
 import UserProfileMenu from "./components/UserProfileMenu";
-//Importing fro, .env file
+
+//Importing from .env file
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 function App() {
@@ -63,7 +64,7 @@ function App() {
     getFilePage();
   }, [getFilePage, page]);
 
-  //on logo or TypeFace text click 
+  //on logo or TypeFace text click  scroll up
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };

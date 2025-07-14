@@ -6,16 +6,12 @@ import { useDispatch } from "react-redux";
 import { resetState } from "./fileViewerSlice";
 import { persistor } from "./store";
 import UserProfileMenu from "./UserProfileMenu";
-
 function Logout() {
   const dispatch = useDispatch();
-
   useEffect(() => {
-    // Clear state on component mount
     dispatch(resetState());
     persistor.purge();
   }, [dispatch]);
-
   return (
     <>
       <Container style={{ marginTop: "88px", textAlign: "center" }}>
@@ -34,5 +30,4 @@ function Logout() {
     </>
   );
 }
-
 export default Logout;

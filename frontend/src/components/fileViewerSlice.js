@@ -1,12 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
-
 const initialState = {
   sortOption: "date-1",
   filterType: "",
   searchTerm: "",
   viewMode: "thumbnail",
 };
-
+//redux
 const fileViewerSlice = createSlice({
   name: "fileViewer",
   initialState,

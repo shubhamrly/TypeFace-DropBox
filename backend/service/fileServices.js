@@ -87,6 +87,6 @@ module.exports = {
     getFilePath,
     getFilePathAndMeta,
     getFilesPaginated,
-    renameFile,      // <-- add this
-    deleteFile       // <-- and this
+    renameFile,     
+    deleteFile       
 };

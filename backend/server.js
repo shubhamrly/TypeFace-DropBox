@@ -12,11 +12,11 @@ app.use(cors());
 app.use(express.json());
 // rate limiting to prevent Uplods flood
 const ratelimiter = rateLimit({
-    windowMs: 1 * 60 * 1000,  //current limit to 1 minutes per 200 requests.
+    windowMs: 1 * 60 * 1000,  //currently limited to 1 minutes per 200 requests.
     max: 200,
     message: { error: "Rate limiting in action. Try after 1 min." }
 });
-// MongoDB Connection (future for Exponetial Backoff)
+// MongoDB Connection 
 mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -26,7 +26,7 @@ mongoose.connect(process.env.MONGODB_URI, {
 })
 .catch((err) => {
     console.error('❌ MongoDB connection failed:', err.message);
-    // Graceful shutdown after short delay (in case of transient issue)
+    // exit after 3 seconds timeout, just in case, 
     setTimeout(() => process.exit(1), 3000);
 });
 app.use(ratelimiter);
