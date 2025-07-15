@@ -16,6 +16,6 @@ router.get('/preview/:filename', fileController.previewFile);
 //renaming a file in the db, updating the record. 
 router.put('/rename/:filename', fileController.renameFile);
 // deleting a file from the db and local uploads folder
-router.delete('/:filename', fileController.deleteFile);
+router.delete('/delete/:filename', fileController.deleteFile);
 
 module.exports = router;

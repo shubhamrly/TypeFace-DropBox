@@ -235,9 +235,10 @@ function FileViewer({ page = 1, filesPerPage = 15, onPageChange, refreshFiles })
       setAlertOpen(true);
     }
   };
+  //delete
   const handleDeleteFile = async () => {
     try {
-      await axios.delete(`${API_BASE_URL}/api/files/${fileToDelete.filename}`);
+      await axios.delete(`${API_BASE_URL}/api/files/delete/${fileToDelete.filename}`);
       const updatedFiles = files.filter((file) => file._id !== fileToDelete._id);
       setFiles(updatedFiles);
       setTotalFiles(totalFiles - 1);
