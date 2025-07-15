@@ -20,7 +20,7 @@ describe("FileViewer", () => {
     expect(await screen.findByAltText(/no-files-found/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/search files/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/view mode/i)).toBeInTheDocument();
-    expect(screen.getByText(/desc date/i)).toBeInTheDocument();
+    expect(screen.getByText(/asc date/i)).toBeInTheDocument();
     expect(screen.getByText(/all files/i)).toBeInTheDocument();
   });
 });

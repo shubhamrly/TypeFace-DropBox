@@ -110,9 +110,9 @@ function FileViewer({ page = 1, filesPerPage = 15, onPageChange, refreshFiles })
       }
       //sorting in the date and size
       allFiles = allFiles.sort((a, b) => {
-        if (sortOption === "date-2") {
+        if (sortOption === "date-1") {
           return new Date(b.uploadedDate) - new Date(a.uploadedDate);
-        } else if (sortOption === "date-1") {
+        } else if (sortOption === "date-2") {
           return new Date(a.uploadedDate) - new Date(b.uploadedDate);
         } else if (sortOption === "size-2") {
           return a.size - b.size;

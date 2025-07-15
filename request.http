@@ -1,6 +1,6 @@
 IMPORTANT: The original file name is stored as metadata in MongoDB, but all file operations use the UUID filename.
 
-# 1. Upload files (multiple files -F supported).
+# 1. Upload files (multi files -F supported).
 curl -F "files=@/path/to/file1.txt" -F "files=@/path/to/file2.jpg" http://localhost:5000/api/files/upload
 
 # 2. Get list of all files.
