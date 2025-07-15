@@ -1,6 +1,6 @@
 {
   "name": "dropbox-backend",
-  "version": "0.0.1",
+  "version": "2.2.0",
   "description": "A simple file upload and storage backend)",
   "main": "server.js",
   "scripts": {
